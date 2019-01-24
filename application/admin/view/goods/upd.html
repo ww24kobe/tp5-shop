@@ -1,0 +1,336 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>无标题文档</title>
+    <link href="{:config('static_admin')}/css/style.css" rel="stylesheet" type="text/css" />
+    <script language="JavaScript" src="{:config('static_admin')}/js/jquery.js"></script>
+    <script type="text/javascript" charset="utf-8" src="/static/ueditor/ueditor.config.js?v=1"></script>
+    <script type="text/javascript" charset="utf-8" src="/static/ueditor/ueditor.all.min.js"> </script>
+    <!--建议手动加在语言，避免在ie下有时因为加载语言失败导致编辑器加载失败-->
+    <!--这里加载的语言文件会覆盖你在配置项目里添加的语言类型，比如你在配置项目里配置的是英文，这里加载的中文，那最后就是中文-->
+    <script type="text/javascript" charset="utf-8" src="/static/ueditor/lang/zh-cn/zh-cn.js"></script>
+    <script type="text/javascript" src='/static/layer/layer.js'></script>
+    <style>
+        .active{
+            border-bottom: solid 3px #66c9f3;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="place">
+        <span>位置：</span>
+        <ul class="placeul">
+            <li><a href="#">首页</a></li>
+            <li><a href="#">表单</a></li>
+        </ul>
+    </div>
+    <div class="formbody">
+        <div class="formtitle">
+            <span class="active">基本信息</span>
+            <span>商品属性信息</span>
+            <span>商品相册</span>
+            <span>商品描述</span>
+
+        </div>
+        <form action="" method="post" enctype="multipart/form-data">
+            <input type="hidden" name="goods_id" value="{$goodsData['goods_id']}">
+            <!-- 第一个选项卡 -->
+            <ul class="forminfo">
+                <li>
+                    <label>商品名称</label>
+                    <input name="goods_name" value="{$goodsData['goods_name']}" placeholder="请输入商品名称" type="text" class="dfinput" /><i></i>
+                </li>
+                <li>
+                    <label>商品价格</label>
+                    <input name="goods_price" value="{$goodsData['goods_price']}" placeholder="请输入商品价格" type="text" class="dfinput" /><i></i>
+                </li>
+                <li>
+                    <label>商品库存</label>
+                    <input name="goods_number" value="{$goodsData['goods_number']}" placeholder="请输入商品库存" type="text" class="dfinput" />
+                </li>
+                <li>
+                    <label>商品分类</label>
+                    <select name="cat_id" class='dfinput'>
+                        <option value=''>请选择商品分类</option>
+                        {foreach name="cats" item='v'}
+                            <option value="{$v['cat_id']}">{:str_repeat('&nbsp;&nbsp;',$v['level']*2)}{$v['cat_name']}</option>
+                        {/foreach}
+                    </select>
+                </li>
+                 <li>
+                    <label>回收站</label>
+                    <input type="radio" name="is_delete" value='1' > 是
+                    <input type="radio" name="is_delete" value='0' checked="checked"> 否
+                </li>
+                
+                <li>
+                    <label>上架</label>
+                    <input type="radio" name="is_sale" value='1' checked="checked"> 是
+                    <input type="radio" name="is_sale" value='0' > 否
+                </li>
+                <li>
+                    <label>新品</label>
+                    <input type="radio" name="is_new" value='1' checked="checked"> 是
+                    <input type="radio" name="is_new" value='0' > 否
+                </li>
+                <li>
+                    <label>热卖</label>
+                    <input type="radio" name="is_hot" value='1' checked="checked"> 是
+                    <input type="radio" name="is_hot" value='0' > 否
+                </li>
+                <li>
+                    <label>推荐</label>
+                    <input type="radio" name="is_best" value='1' checked="checked"> 是
+                    <input type="radio" name="is_best" value='0' > 否
+                </li>
+            </ul>
+
+            <!-- 第二个选项卡 -->
+            <ul class="forminfo">
+                <li>
+                    <label>商品类型</label>
+                    <select name="type_id" class="dfinput">
+                        <option value=''>请选择商品类型</option>
+                        {foreach name="types" item='v'}
+                            <option value="{$v['type_id']}">{$v['type_name']}</option>
+                        {/foreach}
+                    </select>
+                    <!-- 这里存储动态生成属性的容器 -->
+                    <li id="attrContainer">
+                        
+                    </li>
+                </li>
+            </ul>
+            
+            <!-- 第三个选项卡 -->
+            <ul class="forminfo">
+
+                    {foreach name="goodsData['goods_img']" item="path"}
+                    <div style="float: left; margin:4px; text-align: center;">
+                        <a href="javascript:;" onclick="if(confirm('确认删除？')){dropImg(this,{$goodsData['goods_id']},'{$path}')}">[x]</a>
+                        <div>
+                            <img src="/uploads/{$path}" width="150">
+                        </div>
+                    </div>
+                    {/foreach}
+                
+                <li>
+                    <a href="javascript:;" onclick="cloneImg(this)">[+]</a>&nbsp;<input type="file" name="img[]">
+                </li>
+            </ul>
+
+            <!-- 第四个选项卡 -->
+            <ul class="forminfo">
+                <li>
+                    <label>商品描述</label>
+                    <textarea name="goods_desc" id="goods_desc">{$goodsData['goods_desc']}</textarea>
+                </li>
+            </ul>
+
+			<li>
+                <label>&nbsp;</label>
+                <input name="" id="btnSubmit" type="submit" class="btn" value="确认保存" />
+            </li>
+        </form>
+    </div>
+</body>
+<script>
+     //默认商品类型下拉框默认选中
+    $("select[name='type_id']").val("{$goodsData['type_id']}");
+
+    function changeType(attr){
+        var html = "<ul>";
+        for(var i=0; i<attr.length; i++){
+            html += "<li>";
+            //1.只有单选属性才有[+]
+            if(attr[i].attr_type == 1){
+                html += "<a href='javascript:;' onclick='cloneAttr(this)'>[+]</a>";
+            }
+            //2.拼接属性的名称
+            html += attr[i].attr_name + ":";
+            //3.拼接属性值的录入方式
+            var hasManyValue = attr[i].attr_type == 1 ? '[]' : '';
+            if(attr[i].attr_input_type == 1){ //列表选择--》select
+                
+                html += "<select name='attrPrice["+attr[i].attr_id+"]"+hasManyValue+"' class='dfinput'>";
+                html += "<option value=''>请选择</option>";
+                var attr_values_arr = attr[i].attr_values.split('|'); // [黑色，白色]
+                //上面炸开属性值，循环拼接option标签
+                for(var j=0; j<attr_values_arr.length; j++){
+                    html += "<option value='"+attr_values_arr[j]+"'>"+attr_values_arr[j]+"</option>";
+                }
+                html += "</select>";
+            }else{      //手工输入--input
+                html += "<input type='text' name='attrPrice["+attr[i].attr_id+"]"+hasManyValue+"'   class='dfinput' placeholder='属性值' />";
+            }
+            //4.只有单选属性才有价格-input
+            if(attr[i].attr_type == 1){
+                html += "价格：<input type='text' name='attrValue["+attr[i].attr_id+"][]' placeholder='价格' class='dfinput' />";
+            }
+            html += "</li>";
+        }
+        html += "</ul>";
+        //把拼接好的属性放置到对应属性容器中
+        $("#attrContainer").html(html);
+    }
+
+    //给商品类型属性绑定change事件，获取商品的类型的属性
+    $("select[name='type_id']").change(function(){
+        var goods_id = "{$goodsData['goods_id']}";
+        var type_id = $(this).val(); //当前类型的id
+        var params = {"goods_id":goods_id,"type_id":type_id};
+        //发起ajax请求
+        $.get("{:url('/admin/goods/getGoodsTypeAttr')}",params,function(attr){
+            console.log(attr);
+            //第一次请求肯定是回显商品应有的属性，回显原有的属性
+            if(attr[0].goodsAttrInfo){
+                var html = '<ul>';
+                //循环所有属性
+                for(var i=0; i<attr.length; i++){
+                    //循环商品属性goodsAttrInfo
+                    if(attr[i].attr_type == 1){ //单选属性
+
+                        for(var j=0; j<attr[i].goodsAttrInfo.length; j++){
+                            html += "<li>";
+                            //1.只有单选属性才有[+]
+                            var jiajian = j==0?"[+]":'[-]';
+                            html += "<a href='javascript:;' onclick='cloneAttr(this)'>"+jiajian+"</a>";
+                            //2.属性名称
+                            html += attr[i].attr_name+":";
+                            var hasManyValue = attr[i].attr_type == 1 ? '[]' : '';
+                            if(attr[i].attr_input_type == 1){ //3-1.单选属性-列表选择-select
+                                var attr_values_arr = attr[i].attr_values.split('|'); // [黑色，白色]
+                                
+                                html += "<select class='dfinput' name='attrValue["+attr[i].attr_id+"]"+hasManyValue+"'>";
+                                //上面炸开属性值，循环拼接option标签
+                                for(var k=0; k<attr_values_arr.length; k++){
+                                    //默认选中selected
+                                    var selected = attr[i].goodsAttrInfo[j].attr_value == attr_values_arr[k]? " selected='selected' ":"";
+                                    console.log(selected);
+                                    html += "<option "+selected+"  value='"+attr_values_arr[k]+"'>"+attr_values_arr[k]+"</option>";
+                                }
+                                html += "</select>";
+                                
+                               
+                            }else{ //3-1.单选属性-手工输入-input
+                                html += "<input class='dfinput'  name='attrValue["+attr[i].attr_id+"]"+hasManyValue+"' type='text' value='"+attr[i].goodsAttrInfo[j].attr_value+"'/>";
+                            }
+
+                            //4. 拼接价格
+                            // console.log('here',attr[i].attr_type,attr[i]);
+                            html += "价格： <input class='dfinput' name='attrPrice["+attr[i].attr_id+"][]' type='text' value='"+attr[i].goodsAttrInfo[j].attr_price+"'/>";
+
+                            html += "</li>";
+                        }
+                        
+                    }else{ // 唯一属性
+                        html += "<li>";
+                        html += attr[i].attr_name + ":";
+                        if(attr[i].attr_input_type == 1){   //  唯一属性列表选择
+                            var attr_values_arr = attr[i].attr_values.split('|'); // [黑色，白色]
+                            html += "<select name='attrValue["+attr[i].attr_id+"]' class='dfinput'>";
+                            //上面炸开属性值，循环拼接option标签
+                            for(var k=0; k<attr_values_arr.length; k++){
+                                //默认选中selected
+                                var select = attr[i].goodsAttrInfo[0].attr_value == attr_values_arr[k]? " selected='selected' ":"";
+                                html += "<option "+select+" value='"+attr_values_arr[k]+"'>"+attr_values_arr[k]+"</option>";
+                            }
+                            html += "</select>";
+                        }else{   // 唯一属性-手工输入
+                             html += "<input class='dfinput' name='attrValue["+attr[i].attr_id+"]' type='text' value='"+attr[i].goodsAttrInfo[0].attr_value+"'/>";
+                        }
+                        html += "</li>";
+                    }
+                    
+                }
+                html += '</ul>';
+                console.log(html);
+                //把拼接好的属性放置到对应属性容器中
+                $("#attrContainer").html(html);
+               
+            }else{
+                //说明切换了别的商品类型（非当前商品对应的类型）
+                changeType(attr);
+            }
+        },'json');
+    });
+    //页面加载完毕，让上面的类型下拉框自执行change事件
+    $("select[name='type_id']").change();
+
+    //ajax删除商品的图片
+    function dropImg(ele,goods_id,path){
+        //发送ajax请求
+        $.get("{:url('/admin/goods/ajaxDropImg')}",{"goods_id":goods_id,"path":path},function(res){
+            console.log(res);
+            if(res.code == 200){
+                $(ele).parent().remove();
+            }
+            layer.msg(res.message);
+        },'json')
+    }
+
+    //单击克隆图片
+    function cloneImg(ele){
+        var html = $(ele).html();
+        if(html == '[+]'){
+            //获取当前元素的父元素，并克隆一份
+            var newLi = $(ele).parent().clone();
+            //把克隆元素的a标签的的内容改为[-]
+            newLi.children('a').html('[-]');
+            //把克隆的元素追加到当前父元素的后面 after
+            $(ele).parent().after(newLi);
+        }else{
+            //移除当前元素的父元素li
+            $(ele).parent().remove();
+        }
+    }
+
+    //克隆单选属性
+    function cloneAttr(ele){
+        var html = $(ele).html();
+        if(html == '[+]'){
+            //获取当前元素的父元素，并克隆一份
+            var newLi = $(ele).parent().clone();
+            //把克隆元素的a标签的的内容改为[-]
+            newLi.children('a').html('[-]');
+            newLi.children('input').val('');
+            //把克隆的元素追加到当前父元素的后面 after
+            $(ele).parent().after(newLi);
+        }else{
+            //移除当前元素的父元素li
+            $(ele).parent().remove();
+        }
+    }
+
+    //默认商品分类下拉框默认选中
+    $("select[name='cat_id']").val("{$goodsData['cat_id']}");
+   
+    //设置商品的热卖、精品默认单选框默认选中
+    var is_delete = "{$goodsData['is_delete']}";
+    var is_hot = "{$goodsData['is_hot']}";
+    var is_new = "{$goodsData['is_new']}";
+    var is_best = "{$goodsData['is_best']}";
+    var is_sale = "{$goodsData['is_sale']}";
+
+    $("input[name='is_delete'][value="+is_delete+"]").attr('checked',true);
+    $("input[name='is_hot'][value="+is_hot+"]").attr('checked',true);
+    $("input[name='is_new'][value="+is_new+"]").attr('checked',true);
+    $("input[name='is_best'][value="+is_best+"]").attr('checked',true);
+    $("input[name='is_sale'][value="+is_sale+"]").attr('checked',true);
+   
+    //初始化富文本编辑器
+    var ue = UE.getEditor('goods_desc');
+
+
+    $(".formtitle span").click(function(event){
+        $(this).addClass('active').siblings("span").removeClass('active') ;
+        var index = $(this).index();
+        $("ul.forminfo").eq(index).show().siblings(".forminfo").hide();
+    });
+    $(".formtitle span").eq(0).click();
+</script>
+
+</html>
